@@ -16,7 +16,9 @@ Which can be cited with the following:
 Best recommendation is to set up a virtual environment to test dependencies in a clean "sandbox" with Anaconda. This project was tested with Anaconda 4.4.0 Python 3.6 (64 bit)
 
 > conda create -n madecrf python=3.6
+
 > activate madecrf
+
 > pip install -r requirements.txt
 
 From this point, everything should be ready to run the notebooks
