@@ -23,6 +23,16 @@ Best recommendation is to set up a virtual environment to test dependencies in a
 
 From this point, everything should be ready to run the notebooks
 
+# Data - MADE data
+MADE 1.0 data is to perform feature extraction, training and evaluation.  MADE 1.0 data in the training notebook is expected here:
+'C:\MADE' (but easily changed)
+
+Within this directory the following directories are used for the sets released in the MADE 1.0 challenge: 
+
+* MADE-1.0 - Training data
+* made1.0_task1_3_test - Final challenge test data
+
+# Data - Embeddings and clusters
 To generate clusters from pretrained embeddings, the Wikipedia+PubMed embeddings can be acquired [here](http://evexdb.org/pmresources/vec-space-models/).
 
 Any pretrained embeddings can be found by the embedding clustering notebook at this location (easily changed in the notebook):
@@ -38,3 +48,9 @@ Any pretrained embeddings can be found by the embedding clustering notebook at t
 Note that the best model used pretrained embeddings from UPitt which were made available to MADE 1.0 teams.  
 
 Since it's not clear if these can be distributed, code using these embeddings has been disabled.
+
+# Troubleshooting
+
+* While loading the POS tagger in Windows (resources/pos/treebank_brill_aubt.pickle) it's possible to see this exception:
+** ModuleNotFoundError: No module named 'copy_reg\r'
+** If so, this can be fixed by using cygwin and running 'dos2unix' to convert this to proper line endings

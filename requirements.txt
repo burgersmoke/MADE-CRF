@@ -5,3 +5,5 @@ jupyter
 future
 pandas==0.18.0
 bioc==1.0
+matplotlib==2.2.2
+sklearn-crfsuite==0.3.6
