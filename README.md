@@ -23,6 +23,9 @@ From this point, everything should be ready to run the notebooks
 
 To generate clusters from pretrained embeddings, the Wikipedia+PubMed embeddings can be acquired [here](http://evexdb.org/pmresources/vec-space-models/).
 
+Any pretrained embeddings can be found by the embedding clustering notebook at this location (easily changed in the notebook):
+'c:\embeddings'
+
 # Notebooks
 
 * CRF_Training.ipynb - Performs training and evaluation on MADE 1.0 data (including feature extraction, CRF training and evaluation)

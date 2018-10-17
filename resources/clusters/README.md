@@ -1,0 +1,1 @@
+These clusters should be generated the notebook in this repo "Embedding Clustering.ipynb" from pretrained word embeddings 
