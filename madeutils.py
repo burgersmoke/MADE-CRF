@@ -10,16 +10,6 @@ import bioc
 # evaluation from the challenge itself
 from bioc_evaluation import get_f_scores
 
-import keras
-
-# importing a CRF layer (originally from Keras-contrib)
-from keras_contrib.layers.crf import CRF
-
-import keras.backend as K
-from keras.layers import Dense, LSTM, GRU, Bidirectional, Embedding, Input, Dropout, Lambda
-from keras.layers.merge import Concatenate
-from keras.models import Model
-
 import basic
 from basic.nlp.tokenizers import clinical_tokenizers
 from basic.nlp.annotation.annotation import Annotation, AnnotatedDocument
@@ -32,12 +22,6 @@ from sklearn_crfsuite.utils import flatten
 
 import matplotlib.pyplot as plt
 from sklearn.metrics import confusion_matrix
-
-# this package can be found here : 
-# https://github.com/Hironsan/anago
-# after cloning, it can be installed with the typical : 
-# python setup.py install
-import anago
 
 # now let's load in all documents (both text and annotations)
 def read_made_data(made_base_dir, index_tokenizer, ignore_labels = ['PHI'], verbose = False):
@@ -134,130 +118,6 @@ def get_all_sentence_tokens_and_tags(annotated_docs):
                 y.append(sentence_tags)
                 
     return X, y
-
-# NOTE : For some reason, the shuffling (see cells above) in anago is failing,
-# so this function unrolls everything in Anago's wrapper.py and trainer.py so that shuffle
-# can be set ot False directly
-def train_default_anago_model(X_train, y_train, X_test, y_test, max_epoch = 1, embeddings = None, shuffle = False, embeddings_dimensions = 100):
-    p = anago.preprocess.prepare_preprocessor(X_train, y_train, vocab_init=None)
-
-    #set up some default configs...
-    default_sequence = anago.Sequence(max_epoch = max_epoch, embeddings = embeddings, word_emb_size = embeddings_dimensions)
-
-    model_config = default_sequence.model_config
-    training_config = default_sequence.training_config
-
-    filtered_embeddings = embeddings
-    if embeddings is not None:
-        filtered_embeddings = anago.preprocess.filter_embeddings(embeddings, p.vocab_word,
-                                       model_config.word_embedding_size)
-    
-    model_config.char_vocab_size = len(p.vocab_char)
-    model_config.vocab_size = len(p.vocab_word)
-
-    model = anago.models.SeqLabeling(model_config, filtered_embeddings, len(p.vocab_tag))
-
-    # Prepare training and validation data(steps, generator)
-    train_steps, train_batches = anago.reader.batch_iter(X_train,
-                                            y_train,
-                                            training_config.batch_size,
-                                            preprocessor=p,
-                                            shuffle = shuffle)
-                                            
-    valid_steps, valid_batches = anago.reader.batch_iter(X_test,
-                                            y_test,
-                                            training_config.batch_size,
-                                            preprocessor=p,
-                                            shuffle = shuffle)
-
-    model.compile(loss=model.crf.loss,
-                               optimizer=keras.optimizers.Adam(lr=training_config.learning_rate),
-                               )
-
-    callbacks = anago.metrics.get_callbacks(log_dir='',
-                                      tensorboard=True,
-                                      eary_stopping=training_config.early_stopping,
-                                      valid=(valid_steps, valid_batches, p))
-
-    model.fit_generator(generator=train_batches,
-                                     steps_per_epoch=train_steps,
-                                     epochs=training_config.max_epoch,
-                                     callbacks=callbacks)
-                                     
-    return model, p
-    
-def create_model(config, embeddings=None, ntags=None, rnn_cell_type = 'LSTM', enable_char_embeddings = True):
-    # build word embedding
-    word_ids = Input(batch_shape=(None, None), dtype='int32')
-    if embeddings is None:
-        word_embeddings = Embedding(input_dim=config.vocab_size,
-                                    output_dim=config.word_embedding_size,
-                                    mask_zero=True)(word_ids)
-    else:
-        word_embeddings = Embedding(input_dim=embeddings.shape[0],
-                                    output_dim=embeddings.shape[1],
-                                    mask_zero=True,
-                                    weights=[embeddings])(word_ids)
-        
-    if enable_char_embeddings:
-        # build character based word embedding
-        char_ids = Input(batch_shape=(None, None, None), dtype='int32')
-        char_embeddings = Embedding(input_dim=config.char_vocab_size,
-                                    output_dim=config.char_embedding_size,
-                                    mask_zero=True
-                                    )(char_ids)
-        s = K.shape(char_embeddings)
-        char_embeddings = Lambda(lambda x: K.reshape(x, shape=(-1, s[-2], config.char_embedding_size)))(char_embeddings)
-
-        # NOTE : to do an even comparison, use the same number number of GRU units as LSTM units (for characters)
-        num_char_gru_units = config.num_char_lstm_units
-
-        fwd_state = None
-        bwd_state = None
-        if rnn_cell_type == 'LSTM':
-            fwd_state = LSTM(config.num_char_lstm_units, return_state=True)(char_embeddings)[-2]
-            bwd_state = LSTM(config.num_char_lstm_units, return_state=True, go_backwards=True)(char_embeddings)[-2]
-        elif rnn_cell_type == 'GRU':
-            fwd_state = GRU(num_char_gru_units, return_state=True)(char_embeddings)[-2]
-            bwd_state = GRU(num_char_gru_units, return_state=True, go_backwards=True)(char_embeddings)[-2]
-        else:
-            print('Unsupported cell type!')
-
-        char_embeddings = Concatenate(axis=-1)([fwd_state, bwd_state])
-        # shape = (batch size, max sentence length, char hidden size)
-        char_embeddings = Lambda(lambda x: K.reshape(x, shape=[-1, s[1], 2 * config.num_char_lstm_units]))(char_embeddings)
-
-        # combine characters and word
-        x = Concatenate(axis=-1)([word_embeddings, char_embeddings])
-        x = Dropout(config.dropout)(x)
-    else:
-        # in this case, just use character embeddings
-        x = Dropout(config.dropout)(word_embeddings)
-    
-    # NOTE : to same as other note about gRU but for words
-    num_word_gru_units = config.num_word_lstm_units
-
-    if rnn_cell_type == 'LSTM':
-        x = Bidirectional(LSTM(units=config.num_word_lstm_units, return_sequences=True))(x)
-    elif rnn_cell_type == 'GRU':
-        x = Bidirectional(LSTM(units=num_word_gru_units, return_sequences=True))(x)
-    else:
-        print('Unsupported cell type!!!')
-        
-    x = Dropout(config.dropout)(x)
-    x = Dense(config.num_word_lstm_units, activation='tanh')(x)
-    x = Dense(ntags)(x)
-    crf = CRF(ntags, learn_mode='marginal',
-                 test_mode='marginal')
-    pred = crf(x)
-
-    sequence_lengths = Input(batch_shape=(None, 1), dtype='int32')
-    if enable_char_embeddings:
-        model = Model(inputs=[word_ids, char_ids, sequence_lengths], outputs=[pred])
-    else:
-        model = Model(inputs=[word_ids, sequence_lengths], outputs=[pred])
-
-    return model, crf
     
 # NOTE : This plotting function below came from here:
 # http://scikit-learn.org/stable/auto_examples/model_selection/plot_confusion_matrix.html
