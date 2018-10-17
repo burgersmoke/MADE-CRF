@@ -48,6 +48,6 @@ def build_made_tokenizer(keep_token_strings = False):
         
     cs_tokenizer = basic.nlp.tokenizers.clinical_tokenizers.ClinicalSentenceTokenizer(default_sentence_tokenizer = punkt_tokenizer2, preprocess_split_re_strs = cs_preprocess_split_re_strings)
 
-    travel_index_tokenizer = basic.nlp.tokenizers.clinical_tokenizers.IndexTokenizer(cs_tokenizer, treebank_tokenizer, keep_token_strings = keep_token_strings)
+    made_index_tokenizer = basic.nlp.tokenizers.clinical_tokenizers.IndexTokenizer(cs_tokenizer, treebank_tokenizer, keep_token_strings = keep_token_strings)
     
-    return travel_index_tokenizer
+    return made_index_tokenizer
