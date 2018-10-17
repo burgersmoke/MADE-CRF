@@ -4,13 +4,13 @@ Solution for submitted model for the [UMass MADE 1.0 data challenge](http://bio-
 More information on this work can be found in this paper ["Hybrid system for adverse drug event detection"](http://proceedings.mlr.press/v90/chapman18a/chapman18a.pdf)
 
 Which can be cited with the following:
-@inproceedings{chapman2018hybrid,
-  title={Hybrid system for adverse drug event detection},
-  author={Chapman, Alec B and Peterson, Kelly S and Alba, Patrick R and DuVall, Scott L and Patterson, Olga V},
-  booktitle={International Workshop on Medication and Adverse Drug Event Detection},
-  pages={16--24},
-  year={2018}
-}
+>@inproceedings{chapman2018hybrid,
+>  title={Hybrid system for adverse drug event detection},
+>  author={Chapman, Alec B and Peterson, Kelly S and Alba, Patrick R and DuVall, Scott L and Patterson, Olga V},
+>  booktitle={International Workshop on Medication and Adverse Drug Event Detection},
+>  pages={16--24},
+>  year={2018}
+>}
 
 # Instructions
 Best recommendation is to set up a virtual environment to test dependencies in a clean "sandbox" with Anaconda. This project was tested with Anaconda 4.4.0 Python 3.6 (64 bit)
