@@ -30,7 +30,8 @@ MADE 1.0 data is to perform feature extraction, training and evaluation.  MADE 1
 Within this directory the following directories are used for the sets released in the MADE 1.0 challenge: 
 
 * MADE-1.0 - Training data
-* made1.0_task1_3_test - Final challenge test data
+* made1.0_task1_3_test - Dataset released for Task 1 (NER) and 3 (end to end with Relation Extraction) of the challenge
+* made_test_data - Final challenge test data
 
 # Data - Embeddings and clusters
 To generate clusters from pretrained embeddings, the Wikipedia+PubMed embeddings can be acquired [here](http://evexdb.org/pmresources/vec-space-models/).
