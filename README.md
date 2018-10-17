@@ -49,6 +49,11 @@ Note that the best model used pretrained embeddings from UPitt which were made a
 
 Since it's not clear if these can be distributed, code using these embeddings has been disabled.
 
+# FAQ
+
+* Q : Why are the packages named BASIC?  
+* A : Some of these scripts and functions were created on the BASIC (Biosurveillance, Antimicrobial Stewardship and Infection Control) at the University of Utah and Veterans Affairs with Dr. Makoto Jones.
+
 # Troubleshooting
 
 * While loading the POS tagger in Windows (resources/pos/treebank_brill_aubt.pickle) it's possible to see this exception:
