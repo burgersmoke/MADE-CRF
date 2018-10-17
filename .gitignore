@@ -103,3 +103,5 @@ ENV/
 /resources/clusters/WordClusters_K2000_BatchKmeans_wikipedia-pubmed-and-PMC-w2v.pickle
 /resources/clusters/WordClusters_K500_BatchKmeans_wikipedia-pubmed-and-PMC-w2v.pickle
 /resources/clusters/WordClusters_K5000_BatchKmeans_wikipedia-pubmed-and-PMC-w2v.pickle
+/predictions/*
+/models/*/*.pkl
