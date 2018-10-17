@@ -58,7 +58,5 @@ Since it's not clear if these can be distributed, code using these embeddings ha
 # Troubleshooting
 
 * While loading the POS tagger in Windows (resources/pos/treebank_brill_aubt.pickle) it's possible to see this exception:
-
-** ModuleNotFoundError: No module named 'copy_reg\r'
-
-** If so, this can be fixed by using cygwin and running 'dos2unix' to convert this to proper line endings
+ * ModuleNotFoundError: No module named 'copy_reg\r'
+ * If so, this can be fixed by using cygwin and running 'dos2unix' to convert this to proper line endings
