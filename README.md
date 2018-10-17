@@ -1,5 +1,5 @@
 # MADE-CRF
-Solution for submitted model for the [UMass MADE 1.0 data challenge](http://bio-nlp.org/index.php/announcements/39-nlp-challenges)
+Solution for submitted model for the [UMass MADE 1.0 data challenge](http://bio-nlp.org/index.php/announcements/39-nlp-challenges) by contributors at the University of Utah.
 
 More information on this work can be found in this paper ["Hybrid system for adverse drug event detection"](http://proceedings.mlr.press/v90/chapman18a/chapman18a.pdf)
 
